@@ -3,10 +3,12 @@ package main
 import (
 	"bufio"
 	"encoding/binary"
+	"encoding/csv"
 	"encoding/hex"
 	"fmt"
-	//"io"
 	"os"
+	"strconv"
+	//"io"
 )
 
 func Uint64frombytes(bytes []byte) uint64 {
@@ -71,16 +73,24 @@ func main() {
 
 	le_bytes = Uint32bytes(dev)
 	fmt.Println(hex.EncodeToString(le_bytes))
-	/*
-	   f_in, err := os.Open(os.Args[1])
-	   if err != nil {
-	       fmt.Println(err)
-	       os.Exit(1)
-	   }
-	   defer f_in.Close()
+	//  /*
+	f_in, err := os.Open(os.Args[1])
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer f_in.Close()
 
-	   reader := bufio.NewReader(f_in)
-	*/
+	buf_in := bufio.NewReader(f_in)
+
+	csv_in := csv.NewReader(buf_in)
+
+	r, _ := csv_in.Read()
+	r, _ = csv_in.Read()
+	u, _ := strconv.ParseUint(r[0], 10, 64)
+
+	fmt.Println(u, r[1], r[2])
+	//  */
 
 	//	/*
 	f_out, err := os.OpenFile(os.Args[2], os.O_RDWR|os.O_CREATE, 0644)
@@ -89,9 +99,9 @@ func main() {
 		os.Exit(1)
 	}
 	defer f_out.Close()
-	writer := bufio.NewWriter(f_out)
+	buf_out := bufio.NewWriter(f_out)
 
-	_, err = writer.Write(le_bytes)
-	writer.Flush()
+	_, err = buf_out.Write(le_bytes)
+	buf_out.Flush()
 	//  */
 }
